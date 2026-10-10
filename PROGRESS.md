@@ -33,4 +33,10 @@
 
 ## Checkpoint 4 — Release verification
 
-Pending.
+- Interactive project files now let visitors step through each project's purpose and flow. They are clearly labeled as illustrated explanations rather than live demos.
+- Paper-cut lettering is adapted from UFC's Apache-2.0 scrapbook component, with `NOTICE`, its license, README credit, and visible footer credit.
+- Redacted downloadable resume, Vercel configuration, and Git ignore rules are in place.
+- Verified: `npm run build` passes. The 3D scene remains lazy loaded; Vite reports a size warning for that isolated chunk.
+- Deployment handoff: the user will import `Manu-2717/meyank-portfolio` in Vercel manually. After the live URL is available, add it to this file and `README.md`, then verify the deployed site.
+- Last verified commit: pending this checkpoint commit.
+- Exact next steps: import the GitHub repository into Vercel, deploy with the Vite preset, test the production URL, record it here and in README, and push the URL update.

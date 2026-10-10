@@ -1,5 +1,6 @@
 import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { profile } from './data'
+import { Ransom } from './Scrapbook'
 
 const Scene = lazy(() => import('./Scene'))
 
@@ -35,10 +36,10 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return <span aria-hidden="true">{diagonal ? '↗' : '→'}</span>
 }
 
-function MagneticLink({ href, children, className = '' }: { href: string, children: React.ReactNode, className?: string }) {
+function MagneticLink({ href, children, className = '', download = false }: { href: string, children: React.ReactNode, className?: string, download?: boolean }) {
   const ref = useRef<HTMLAnchorElement>(null)
   const reduced = useReducedMotion()
-  return <a ref={ref} className={className} href={href}
+  return <a ref={ref} className={className} href={href} download={download || undefined}
     onPointerMove={event => {
       if (reduced || event.pointerType !== 'mouse') return
       const el = ref.current
@@ -77,7 +78,7 @@ function Hero() {
       <p className="hero-lead">{profile.summary}</p>
       <div className="hero-cta">
         <MagneticLink className="button button-primary" href="#work">Explore my work <Arrow /></MagneticLink>
-        <MagneticLink className="button button-ghost" href="/Meyank_Resume_Public.pdf">Download resume <span aria-hidden="true">↓</span></MagneticLink>
+        <MagneticLink className="button button-ghost" href="/Meyank_Resume_Public.pdf" download>Download resume <span aria-hidden="true">↓</span></MagneticLink>
       </div>
       <div className="hero-bottom"><span>MEYANK / {profile.role.toUpperCase()}</span><span>SCROLL TO EXPLORE <span aria-hidden="true">↓</span></span></div>
     </div>
@@ -88,7 +89,9 @@ function SectionLabel({ number, title }: { number: string, title: string }) {
   return <div className="section-label"><span>{number}</span><span>{title}</span><span className="section-line" /></div>
 }
 
-function ProjectCard({ project }: { project: typeof profile.projects[number] }) {
+type Project = typeof profile.projects[number]
+
+function ProjectCard({ project, onExplore }: { project: Project, onExplore: () => void }) {
   const ref = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
   return <article className={`project-card tone-${project.tone}`} ref={ref}
@@ -103,9 +106,30 @@ function ProjectCard({ project }: { project: typeof profile.projects[number] }) 
     <div className="project-body"><div className="project-meta"><span>{project.index} / {project.label}</span><span>{project.status}</span></div>
       <h3>{project.title}</h3><p>{project.description}</p>
       <div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
-      {project.url ? <a className="project-link" href={project.url} target="_blank" rel="noopener noreferrer">{project.linkLabel} <Arrow diagonal /></a> : <span className="project-note">Details available on request</span>}
+      <div className="project-actions"><button className="project-explore" type="button" onClick={onExplore}>See how it works <Arrow /></button>{project.url ? <a className="project-link" href={project.url} target="_blank" rel="noopener noreferrer">{project.linkLabel} <Arrow diagonal /></a> : null}</div>
     </div>
   </article>
+}
+
+function ProjectExplorer({ project, onClose }: { project: Project, onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null)
+  const [step, setStep] = useState(0)
+  useEffect(() => {
+    const dialog = ref.current
+    if (dialog && !dialog.open) dialog.showModal()
+  }, [])
+  return <dialog ref={ref} className={`project-dialog tone-${project.tone}`} aria-labelledby="dialog-title" onClose={onClose} onClick={event => { if (event.target === event.currentTarget) ref.current?.close() }}>
+    <div className="dialog-paper">
+      <div className="dialog-top"><span>PROJECT FILE / {project.index}</span><button type="button" className="dialog-close" onClick={() => ref.current?.close()} aria-label="Close project walkthrough">×</button></div>
+      <p className="dialog-kicker">INTERACTIVE CONCEPT MAP · {project.status.toUpperCase()}</p>
+      <h2 id="dialog-title">{project.title}</h2>
+      <p className="dialog-intro">{project.description}</p>
+      <div className="flow-track" aria-label="Project walkthrough stages">{project.walkthrough.map((item, index) => <button key={item.title} type="button" className={`flow-node ${index === step ? 'active' : ''}`} onClick={() => setStep(index)} aria-current={index === step ? 'step' : undefined}><small>0{index + 1}</small><span>{item.title}</span></button>)}</div>
+      <div className="flow-detail" aria-live="polite"><span>STAGE 0{step + 1} / 0{project.walkthrough.length}</span><h3>{project.walkthrough[step].title}</h3><p>{project.walkthrough[step].detail}</p></div>
+      <div className="dialog-bottom"><p>This is an illustrated explanation of the project, not a live product demo.</p><div><button type="button" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>← Previous</button><button type="button" onClick={() => setStep(Math.min(project.walkthrough.length - 1, step + 1))} disabled={step === project.walkthrough.length - 1}>Next →</button></div></div>
+      {project.url && <a className="dialog-source" href={project.url} target="_blank" rel="noopener noreferrer">{project.linkLabel} <Arrow diagonal /></a>}
+    </div>
+  </dialog>
 }
 
 function SkillField() {
@@ -163,6 +187,7 @@ function SkillField() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const elements = document.querySelectorAll<HTMLElement>('.section-heading, .about-grid, .timeline-item, .contact-inner')
@@ -187,12 +212,13 @@ function App() {
     <main id="main">
       <Hero />
       <section className="about-section section-pad" id="about"><div className="shell"><SectionLabel number="02" title="ABOUT / THE HUMAN BEHIND THE SYSTEM" /><div className="about-grid"><div><p className="overline">A CURIOUS MIND, IN MOTION</p><h2>Learning the systems.<br /><span>Building what matters.</span></h2><div className="about-stamp" aria-hidden="true"><span>USAR</span><strong>AI / DATA</strong><small>2025 — 2029</small></div></div><div className="about-copy"><p>{profile.about}</p><p>My current interests span multilingual data, LLM fine-tuning, efficient inference, and tools that make complex workflows easier to use.</p><a className="text-link" href="mailto:meyank27@gmail.com">Start a conversation <Arrow diagonal /></a></div></div></div></section>
-      <section className="work-section section-pad" id="work"><div className="shell"><SectionLabel number="03" title="SELECTED WORK / REAL PROBLEMS, REAL BUILDS" /><div className="section-heading"><div><p className="overline">PROJECTS / 01 — 04</p><h2>Things I've<br /><em>put into motion.</em></h2></div><p>From model infrastructure to multilingual data and practical tools, these projects reflect how I learn by building.</p></div><div className="project-grid">{profile.projects.map(project => <ProjectCard key={project.title} project={project} />)}</div></div></section>
+      <section className="work-section section-pad" id="work"><div className="shell"><SectionLabel number="03" title="SELECTED WORK / REAL PROBLEMS, REAL BUILDS" /><div className="section-heading"><div><p className="overline">PROJECTS / 01 — 04</p><h2>Things I've<br /><em>put into motion.</em></h2></div><p>From model infrastructure to multilingual data and practical tools, these projects reflect how I learn by building. Open each project file to explore its purpose and flow.</p></div><div className="project-grid">{profile.projects.map(project => <ProjectCard key={project.title} project={project} onExplore={() => setSelectedProject(project)} />)}</div></div></section>
       <section className="skills-section section-pad" id="skills"><div className="shell"><SectionLabel number="04" title="TOOLKIT / IDEAS NEED INSTRUMENTS" /><div className="section-heading"><div><p className="overline">WORKING KNOWLEDGE</p><h2>A toolkit for<br /><em>exploration.</em></h2></div><p>Languages, libraries, and methods I use across data, AI, and software projects. Drag the tokens on desktop to give them a little momentum.</p></div><SkillField /><div className="skill-groups">{profile.skills.map(group => <div key={group.group}><h3>{group.group}</h3><p>{group.items.join(' · ')}</p></div>)}</div></div></section>
       <section className="journey-section section-pad" id="journey"><div className="shell"><SectionLabel number="05" title="JOURNEY / STILL IN THE MAKING" /><div className="journey-grid"><div><p className="overline">A GROWING PATH</p><h2>Learning out loud.<br /><em>Building together.</em></h2></div><div className="timeline">{profile.timeline.map(item => <article key={item.title} className="timeline-item"><span className="timeline-date">{item.date}</span><div><h3>{item.title}</h3><strong>{item.place}</strong><p>{item.description}</p></div></article>)}</div></div></div></section>
-      <section className="contact-section section-pad" id="contact"><div className="shell"><SectionLabel number="06" title="CONTACT / THE NEXT CONVERSATION" /><div className="contact-inner"><p className="overline">HAVE AN IDEA?</p><h2>Let's make<br /><em>something useful.</em></h2><a className="contact-email" href={`mailto:${profile.email}`}>{profile.email} <Arrow diagonal /></a><div className="socials"><a href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow diagonal /></a><a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href={profile.links.huggingFace} target="_blank" rel="noopener noreferrer">Hugging Face <Arrow diagonal /></a></div></div></div></section>
+      <section className="contact-section section-pad" id="contact"><div className="shell"><SectionLabel number="06" title="CONTACT / THE NEXT CONVERSATION" /><div className="contact-inner"><p className="overline">HAVE AN IDEA?</p><div className="contact-ransom"><Ransom text="let's talk" seed={3} /></div><h2>Let's make<br /><em>something useful.</em></h2><a className="contact-email" href={`mailto:${profile.email}`}>{profile.email} <Arrow diagonal /></a><div className="socials"><a href={profile.links.github} target="_blank" rel="noopener noreferrer">GitHub <Arrow diagonal /></a><a href={profile.links.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Arrow diagonal /></a><a href={profile.links.huggingFace} target="_blank" rel="noopener noreferrer">Hugging Face <Arrow diagonal /></a></div></div></div></section>
     </main>
-    <footer><div className="shell footer-inner"><span>© {new Date().getFullYear()} MEYANK</span><span>BUILT WITH CURIOSITY</span><a href="#top">BACK TO TOP ↑</a></div></footer>
+    {selectedProject && <ProjectExplorer key={selectedProject.title} project={selectedProject} onClose={() => setSelectedProject(null)} />}
+    <footer><div className="shell footer-inner"><span>© {new Date().getFullYear()} MEYANK</span><a href="https://github.com/USAR-FOSS/ufc_website" target="_blank" rel="noopener noreferrer">SCRAPBOOK CODE ADAPTED FROM UFC ↗</a><a href="#top">BACK TO TOP ↑</a></div></footer>
   </>
 }
 
