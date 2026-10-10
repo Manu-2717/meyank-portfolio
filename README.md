@@ -1,0 +1,24 @@
+# Meyank — Portfolio
+
+A portfolio for Meyank, an AI and data science student. Content is sourced from the supplied resume and kept in `src/data.ts` for easy edits.
+
+## Run locally
+
+Requires Node.js 20.19+.
+
+```sh
+npm install
+npm run dev
+```
+
+Run `npm run build` to create the production site in `dist/` and `npm run preview` to inspect that build locally.
+
+## Deploy on Vercel
+
+Import this GitHub repository into Vercel. Select the Vite framework preset, leave the root directory at the repository root, use `npm run build`, and set the output directory to `dist`. Vercel can redeploy each push to `main`.
+
+The site is static and requires no backend, secrets, or environment variables. The contact action is an email link. The downloadable resume in `public/Meyank_Resume_Public.pdf` is a separately generated public copy without a phone number. Do not commit the original resume.
+
+## Progress
+
+See `PROGRESS.md` for the last verified checkpoint, test results, and next steps.
