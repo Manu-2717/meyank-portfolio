@@ -1,6 +1,6 @@
 # Meyank — Portfolio
 
-A portfolio for Meyank, an AI and data science student. Content is sourced from the supplied resume and kept in `src/data.ts` for easy edits.
+A light, interactive research notebook for Meyank, an AI and data science student. Its tactile notes and playful motion are inspired by the [UFC site](https://github.com/USAR-FOSS/ufc_website), with an original visual identity. Content is sourced from the supplied resume and kept in `src/data.ts` for easy edits.
 
 ## Run locally
 
@@ -17,7 +17,7 @@ Run `npm run build` to create the production site in `dist/` and `npm run previe
 
 Import this GitHub repository into Vercel. Select the Vite framework preset, leave the root directory at the repository root, use `npm run build`, and set the output directory to `dist`. Vercel can redeploy each push to `main`.
 
-The site is static and requires no backend, secrets, or environment variables. The contact action is an email link. The downloadable resume in `public/Meyank_Resume_Public.pdf` is a separately generated public copy without a phone number. Do not commit the original resume.
+The site is static and requires no backend, secrets, or environment variables. The contact action is an email link. The downloadable resume in `public/Meyank_Resume_Public.pdf` is a separately generated public copy without a phone number. Do not commit the original resume. The 3D scene is lazy loaded and has reduced-motion and WebGL fallbacks.
 
 ## Progress
 

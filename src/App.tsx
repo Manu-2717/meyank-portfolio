@@ -1,7 +1,13 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { profile } from './data'
 
 const Scene = lazy(() => import('./Scene'))
+
+class SceneBoundary extends Component<{ children: React.ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() { return this.state.failed ? <div className="hero-fallback"><div className="fallback-orbit" /><div className="fallback-core" /></div> : this.props.children }
+}
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -57,7 +63,7 @@ function Hero() {
   }, [])
   return <section className="hero" id="top" ref={heroRef}>
     <div className="hero-art" aria-hidden="true">
-      {webgl && !reduced && inView ? <Suspense fallback={<div className="hero-fallback" />}><Scene /></Suspense> : <div className="hero-fallback"><div className="fallback-orbit" /><div className="fallback-core" /></div>}
+      {webgl && !reduced && inView ? <SceneBoundary><Suspense fallback={<div className="hero-fallback" />}><Scene /></Suspense></SceneBoundary> : <div className="hero-fallback"><div className="fallback-orbit" /><div className="fallback-core" /></div>}
     </div>
     <div className="hero-notes" aria-hidden="true">
       <div className="hero-note note-one"><span>FIELD NOTE / 01</span><strong>language<br />& logic</strong><i>↗</i></div>
@@ -157,6 +163,20 @@ function SkillField() {
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const elements = document.querySelectorAll<HTMLElement>('.section-heading, .about-grid, .timeline-item, .contact-inner')
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: .12 })
+    elements.forEach(element => { element.classList.add('will-reveal'); observer.observe(element) })
+    return () => observer.disconnect()
+  }, [])
   return <>
     <a className="skip-link" href="#main">Skip to content</a>
     <header className="site-header"><nav className="shell nav" aria-label="Main navigation">

@@ -20,11 +20,16 @@
 - Complete responsive page with hero, about, four verified projects, skills, journey, contact, and public resume link.
 - Researched the UFC reference source. Its tactile collage, sticker play, and section-by-section storytelling informed the research-note details and skill playground; the portfolio keeps its own dark AI visual language.
 - Verified: `npm run build` passed; desktop and 390px mobile layouts reviewed in the browser; no horizontal overflow or console errors observed.
+- Commit: `bea06a7` (pushed to the public GitHub repository).
 - Next: refine interaction details and accessibility, then commit checkpoint 3.
 
 ## Checkpoint 3 — 3D and interaction
 
-Pending.
+- Switched to the user-requested light scrapbook direction: warm paper sections, cobalt ink, pinned field notes, staggered project case files, torn edges, and a USAR stamp.
+- The React Three Fiber scene uses a light palette, capped pixel ratio, lazy loading, offscreen unmounting, and a fallback when WebGL or rendering fails.
+- Skill tokens can be dragged and thrown on desktop, rebound at the field boundary, and reveal their category when clicked or tapped. Section content reveals as it enters view; reduced-motion visitors get static content.
+- Verified: production build passed; mobile viewport has no horizontal overflow or console errors.
+- Next: run final privacy/link checks, deploy through Vercel, and record the live URL.
 
 ## Checkpoint 4 — Release verification
 

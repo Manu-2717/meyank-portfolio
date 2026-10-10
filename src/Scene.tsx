@@ -28,45 +28,45 @@ function World() {
     camera.lookAt(0, 0, 0)
   })
   return <>
-    <color attach="background" args={['#080e19']} />
-    <fog attach="fog" args={['#080e19', 8, 19]} />
-    <ambientLight intensity={1.1} color="#91b4ff" />
-    <pointLight position={[4, 3, 3]} intensity={45} color="#4f87ff" />
-    <pointLight position={[-4, -1, 2]} intensity={30} color="#895bff" />
+    <color attach="background" args={['#f5f1e7']} />
+    <fog attach="fog" args={['#f5f1e7', 8, 19]} />
+    <ambientLight intensity={1.8} color="#d8e6ff" />
+    <pointLight position={[4, 3, 3]} intensity={55} color="#537bff" />
+    <pointLight position={[-4, -1, 2]} intensity={28} color="#e184b5" />
     <group ref={group} rotation={[.22, -.4, -.35]}>
       <mesh ref={core}>
         <icosahedronGeometry args={[1.35, 3]} />
-        <meshPhysicalMaterial color="#a9c7ff" metalness={.75} roughness={.18} transmission={.27} thickness={1.8} clearcoat={1} flatShading />
+        <meshPhysicalMaterial color="#3561cf" metalness={.4} roughness={.24} transmission={.08} thickness={1.8} clearcoat={1} flatShading />
       </mesh>
       <mesh ref={ring} rotation={[.9, .25, .2]}>
         <torusGeometry args={[2.2, .018, 8, 180]} />
-        <meshBasicMaterial color="#8caeff" transparent opacity={.8} />
+        <meshBasicMaterial color="#264ca2" transparent opacity={.8} />
       </mesh>
       <mesh rotation={[1.25, -.5, .6]}>
         <torusGeometry args={[2.58, .009, 8, 180]} />
-        <meshBasicMaterial color="#8a6cff" transparent opacity={.48} />
+        <meshBasicMaterial color="#b84386" transparent opacity={.55} />
       </mesh>
       <mesh rotation={[.2, .9, -.3]}>
         <torusGeometry args={[1.92, .008, 8, 180]} />
-        <meshBasicMaterial color="#c8d4ff" transparent opacity={.52} />
+        <meshBasicMaterial color="#294b95" transparent opacity={.52} />
       </mesh>
       {Array.from({ length: 9 }, (_, i) => {
         const angle = i * Math.PI * 2 / 9
         return <mesh key={i} position={[Math.cos(angle) * 2.2, Math.sin(angle * 1.3) * .55, Math.sin(angle) * 2.2]}>
           <sphereGeometry args={[i % 3 === 0 ? .075 : .04, 12, 12]} />
-          <meshBasicMaterial color={i % 3 === 0 ? '#91baff' : '#b398ff'} />
+          <meshBasicMaterial color={i % 3 === 0 ? '#2455bf' : '#be4888'} />
         </mesh>
       })}
     </group>
     <points>
       <bufferGeometry><bufferAttribute attach="attributes-position" args={[points, 3]} /></bufferGeometry>
-      <pointsMaterial color="#adc4ff" size={.025} sizeAttenuation transparent opacity={.55} depthWrite={false} />
+      <pointsMaterial color="#5570aa" size={.025} sizeAttenuation transparent opacity={.55} depthWrite={false} />
     </points>
   </>
 }
 
 export default function Scene() {
-  return <Canvas dpr={[1, 1.6]} camera={{ position: [0, 0, 6.6], fov: 42 }} gl={{ antialias: true, powerPreference: 'low-power' }}>
+  return <Canvas dpr={[1, window.innerWidth < 650 ? 1.25 : 1.6]} camera={{ position: [0, 0, 6.6], fov: 42 }} gl={{ antialias: true, powerPreference: 'low-power' }}>
     <World />
   </Canvas>
 }
