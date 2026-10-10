@@ -38,5 +38,5 @@
 - Redacted downloadable resume, Vercel configuration, and Git ignore rules are in place.
 - Verified: `npm run build` passes. The 3D scene remains lazy loaded; Vite reports a size warning for that isolated chunk.
 - Deployment handoff: the user will import `Manu-2717/meyank-portfolio` in Vercel manually. After the live URL is available, add it to this file and `README.md`, then verify the deployed site.
-- Last verified commit: pending this checkpoint commit.
+- Last verified commit: `2a91407` (pushed to `main`).
 - Exact next steps: import the GitHub repository into Vercel, deploy with the Vite preset, test the production URL, record it here and in README, and push the URL update.
