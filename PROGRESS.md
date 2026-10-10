@@ -5,7 +5,8 @@
 - Source: supplied resume, read on 2026-10-10. Public copy intentionally omits the phone number.
 - Verified details and links are centralized in `src/data.ts`.
 - Vite, React, TypeScript, and React Three Fiber setup is in place.
-- Next: build the readable portfolio sections, then add 3D and physical interactions.
+- Commit: `c0240e3`.
+- Next: review the readable site, then refine 3D and physical interactions.
 
 ## Resume after a context reset
 
@@ -16,7 +17,10 @@
 
 ## Checkpoint 2 — Readable site
 
-Pending.
+- Complete responsive page with hero, about, four verified projects, skills, journey, contact, and public resume link.
+- Researched the UFC reference source. Its tactile collage, sticker play, and section-by-section storytelling informed the research-note details and skill playground; the portfolio keeps its own dark AI visual language.
+- Verified: `npm run build` passed; desktop and 390px mobile layouts reviewed in the browser; no horizontal overflow or console errors observed.
+- Next: refine interaction details and accessibility, then commit checkpoint 3.
 
 ## Checkpoint 3 — 3D and interaction
 
